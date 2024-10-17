@@ -1,56 +1,69 @@
 import random
-from collections import Counter, defaultdict
-
-colors = ["Karo", "Herz", "Pik", "Kreuz"]
-symbols = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Bube", "Dame", "König", "Ass"]
+from collections import defaultdict
 
 
-def generate_card():
+colors = ("Karo", "Herz", "Pik", "Kreuz")
+symbols = ("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14")
+# 11 = Bube, 12 = Dame, 13 = König, 14 = Ass
+
+
+def generate_deck():
     deck = [(symbol, farbe) for symbol in symbols for farbe in colors]
     return deck
 
 
 def draw_hand(deck):
-    return random.sample(deck, 5)
+    length = len(deck)
+
+    for _ in range(5):
+        random_index = random.randint(0, length - 1)
+
+        deck[random_index], deck[length - 1] = deck[length - 1], deck[random_index]
+        length -= 1
+
+    return deck[-5:]
+
+
+def get_symbols(hand):
+    return [card[0] for card in hand]
+
+
+def get_colors(hand):
+    return [card[1] for card in hand]
 
 
 def has_same_values(hand, count=2):
-    values = [card[0] for card in hand]
+    values = get_symbols(hand)
     for value in values:
         if values.count(value) == count:
             return True
     return False
 
 
+def is_two_pair(hand):
+    values = get_symbols(hand)
+    pairs = set()
+
+    for value in values:
+        if values.count(value) == 2:
+            pairs.add(value)
+
+    return len(pairs) == 2
+
+
 def is_full_house(hand):
-    values = [card[0] for card in hand]
-    counts = [values.count(value) for value in set(values)]
-    return 2 in counts and 3 in counts
+    return has_same_values(hand, 2) and has_same_values(hand, 3)
 
 
 def is_flush(hand):
-    colors = [card[1] for card in hand]
+    colors = get_colors(hand)
     return len(set(colors)) == 1
 
 
 def is_street(hand):
-    value_map = {
-        "2": 2,
-        "3": 3,
-        "4": 4,
-        "5": 5,
-        "6": 6,
-        "7": 7,
-        "8": 8,
-        "9": 9,
-        "10": 10,
-        "Bube": 11,
-        "Dame": 12,
-        "König": 13,
-        "Ass": 14
-    }
-
-    values = sorted([value_map[card[0]] for card in hand])
+    values = sorted([int(card[0]) for card in hand])
+    if len(set(values)) != 5:
+        return False
     return values[-1] - values[0] == 4
 
 
@@ -58,22 +71,31 @@ def is_straight_flush(hand):
     return is_flush(hand) and is_street(hand)
 
 
+def is_royal_flush(hand):
+    return is_straight_flush(hand) and "14" in [card[0] for card in hand]
+
+
 def simulate_games(num_games=100000):
-    deck = generate_card()
+    deck = generate_deck()
     counter = defaultdict(int)
 
     for _ in range(num_games):
         hand = draw_hand(deck)
-        if is_straight_flush(hand):
+
+        if is_royal_flush(hand):
+            counter["Royal Flush"] += 1
+        elif is_straight_flush(hand):
             counter["Straight Flush"] += 1
-        elif is_flush(hand):
-            counter["Flush"] += 1
-        elif is_street(hand):
-            counter["Straße"] += 1
         elif has_same_values(hand, 4):
             counter["Vierling"] += 1
         elif is_full_house(hand):
             counter["Full House"] += 1
+        elif is_flush(hand):
+            counter["Flush"] += 1
+        elif is_street(hand):
+            counter["Straße"] += 1
+        elif is_two_pair(hand):
+            counter["Zwei Paare"] += 1
         elif has_same_values(hand, 3):
             counter["Drilling"] += 1
         elif has_same_values(hand, 2):
@@ -86,8 +108,17 @@ if __name__ == "__main__":
     num_games = 100000
     counter = simulate_games(num_games)
 
-    for kombination, count in counter.items():
+    for combination, count in counter.items():
         percent = (count / num_games) * 100
-        print(f"{kombination}: {percent:.2f}%")
+        print(f"{combination}: {percent:.2f}%")
 
-    # Hier könnten theoretische Wahrscheinlichkeiten aus dem Netz recherchiert werden und verglichen werden.
+
+# Royal Flush	    0.000154%
+# Straight Flush	0.00139%
+# Vierling	        0.0240%
+# Full House	    0.1441%
+# Flush	            0.197%
+# Straight	        0.3925%
+# Trilling	        2.1128%
+# Doppelpaar	    4.7539%
+# Paar	            42.2569%
