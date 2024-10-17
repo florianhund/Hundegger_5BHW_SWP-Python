@@ -8,7 +8,9 @@ symbols = ("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14")
 
 
 def generate_deck():
-    deck = [(symbol, farbe) for symbol in symbols for farbe in colors]
+    deck = [
+        {"symbol": symbol, "color": color} for symbol in symbols for color in colors
+    ]
     return deck
 
 
@@ -25,11 +27,11 @@ def draw_hand(deck):
 
 
 def get_symbols(hand):
-    return [card[0] for card in hand]
+    return [card["symbol"] for card in hand]
 
 
 def get_colors(hand):
-    return [card[1] for card in hand]
+    return [card["color"] for card in hand]
 
 
 def has_same_values(hand, count=2):
@@ -61,7 +63,7 @@ def is_flush(hand):
 
 
 def is_street(hand):
-    values = sorted([int(card[0]) for card in hand])
+    values = sorted([int(card["symbol"]) for card in hand])
     if len(set(values)) != 5:
         return False
     return values[-1] - values[0] == 4
@@ -72,7 +74,7 @@ def is_straight_flush(hand):
 
 
 def is_royal_flush(hand):
-    return is_straight_flush(hand) and "14" in [card[0] for card in hand]
+    return is_straight_flush(hand) and "14" in [card["symbol"] for card in hand]
 
 
 def simulate_games(num_games=100000):
@@ -118,7 +120,7 @@ if __name__ == "__main__":
 # Vierling	        0.0240%
 # Full House	    0.1441%
 # Flush	            0.197%
-# Straight	        0.3925%
+# Straße	        0.3925%
 # Trilling	        2.1128%
 # Doppelpaar	    4.7539%
 # Paar	            42.2569%
