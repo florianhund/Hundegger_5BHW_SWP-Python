@@ -15,15 +15,8 @@ def generate_deck():
 
 
 def draw_hand(deck):
-    length = len(deck)
-
-    for _ in range(5):
-        random_index = random.randint(0, length - 1)
-
-        deck[random_index], deck[length - 1] = deck[length - 1], deck[random_index]
-        length -= 1
-
-    return deck[-5:]
+    random.shuffle(deck)
+    return deck[:5]
 
 
 def get_symbols(hand):
@@ -74,7 +67,7 @@ def is_straight_flush(hand):
 
 
 def is_royal_flush(hand):
-    return is_straight_flush(hand) and "14" in [card["symbol"] for card in hand]
+    return is_straight_flush(hand) and "14" in get_symbols(hand)
 
 
 def simulate_games(num_games=100000):
@@ -82,6 +75,8 @@ def simulate_games(num_games=100000):
     counter = defaultdict(int)
 
     for _ in range(num_games):
+        # optimize code to evaluate symbols and colors only once
+        # to prevent for loop in every check
         hand = draw_hand(deck)
 
         if is_royal_flush(hand):
