@@ -1,23 +1,23 @@
 import random
 from collections import defaultdict
 
-colors = ("Karo", "Herz", "Pik", "Kreuz")
-symbols = ("2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14")
+colors = ('Karo', 'Herz', 'Pik', 'Kreuz')
+symbols = ('2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14')
 # 11 = Bube, 12 = Dame, 13 = König, 14 = Ass
 
 
 def generate_deck():
-    return [{"symbol": symbol, "color": color} for symbol in symbols for color in colors]
+    return [{'symbol': symbol, 'color': color} for symbol in symbols for color in colors]
 
 
-def draw_hand(deck):
+def draw_hand(deck, card_amount=5):
     random.shuffle(deck)
-    return deck[:5]
+    return deck[:card_amount]
 
 
 def get_hand_details(hand):
-    symbols = [card["symbol"] for card in hand]
-    colors = [card["color"] for card in hand]
+    symbols = [card['symbol'] for card in hand]
+    colors = [card['color'] for card in hand]
     symbol_counts = {}
 
     for symbol in symbols:
@@ -55,7 +55,7 @@ def is_straight_flush(symbols, colors):
 
 
 def is_royal_flush(symbols, colors):
-    return is_straight_flush(symbols, colors) and "14" in symbols
+    return is_straight_flush(symbols, colors) and '14' in symbols
 
 
 def simulate_games(num_games=100000):
@@ -63,38 +63,38 @@ def simulate_games(num_games=100000):
     counter = defaultdict(int)
 
     for _ in range(num_games):
-        hand = draw_hand(deck)
+        hand = draw_hand(deck, 5)
         symbols, colors, symbol_counts = get_hand_details(hand)
 
         if is_royal_flush(symbols, colors):
-            counter["Royal Flush"] += 1
+            counter['Royal Flush'] += 1
         elif is_straight_flush(symbols, colors):
-            counter["Straight Flush"] += 1
+            counter['Straight Flush'] += 1
         elif has_same_values(symbol_counts, 4):
-            counter["Vierling"] += 1
+            counter['Vierling'] += 1
         elif is_full_house(symbol_counts):
-            counter["Full House"] += 1
+            counter['Full House'] += 1
         elif is_flush(colors):
-            counter["Flush"] += 1
+            counter['Flush'] += 1
         elif is_street(symbols):
-            counter["Straße"] += 1
+            counter['Straße'] += 1
         elif is_two_pair(symbol_counts):
-            counter["Zwei Paare"] += 1
+            counter['Zwei Paare'] += 1
         elif has_same_values(symbol_counts, 3):
-            counter["Drilling"] += 1
+            counter['Drilling'] += 1
         elif has_same_values(symbol_counts, 2):
-            counter["Paar"] += 1
+            counter['Paar'] += 1
 
     return counter
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     num_games = 100000
     counter = simulate_games(num_games)
 
     for combination, count in counter.items():
         percent = (count / num_games) * 100
-        print(f"{combination}: {percent:.2f}%")
+        print(f'{combination}: {percent:.2f}%')
 
 
 # Royal Flush	    0.000154%
