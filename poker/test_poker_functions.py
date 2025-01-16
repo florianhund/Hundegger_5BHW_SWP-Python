@@ -3,7 +3,6 @@ import poker_functions as pf
 
 
 class TestCardFunctions(unittest.TestCase):
-
     def test_generate_deck(self):
         deck = pf.generate_deck()
         self.assertEqual(len(deck), 52)
