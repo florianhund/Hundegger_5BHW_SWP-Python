@@ -1,61 +1,60 @@
+import random
+
 class Node:
-    def __init__(self, data):
-        self.data = data
-        self.prev = None
+    def __init__(self, value):
+        self.value = value
         self.next = None
+        self.prev = None
 
-
-class DoublyLinkedList:
+class LinkedList:
     def __init__(self):
         self.head = None
+        self.tail = None
 
-    def append(self, data):
-        new_node = Node(data)
+    def add_last(self, value):
+        new_node = Node(value)
         if not self.head:
-            self.head = new_node
-            return
-        temp = self.head
-        while temp.next:
-            temp = temp.next
-        temp.next = new_node
-        new_node.prev = temp
+            self.head = self.tail = new_node
+        else:
+            self.tail.next = new_node
+            new_node.prev = self.tail
+            self.tail = new_node
 
-    def prepend(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            return
-        new_node.next = self.head
-        self.head.prev = new_node
-        self.head = new_node
-
-    def delete(self, data):
-        temp = self.head
-        while temp and temp.data != data:
-            temp = temp.next
-        if not temp:
-            return
-        if temp.prev:
-            temp.prev.next = temp.next
-        if temp.next:
-            temp.next.prev = temp.prev
-        if temp == self.head:
-            self.head = temp.next
-        del temp
+    def length(self):
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
 
     def display(self):
-        temp = self.head
-        while temp:
-            print(temp.data, end=" <-> ")
-            temp = temp.next
+        current = self.head
+        while current:
+            print(current.value, end=" <-> ")
+            current = current.next
         print("None")
 
+    def __iter__(self):
+        self._iter_node = self.head
+        return self
 
-dll = DoublyLinkedList()
-dll.append(10)
-dll.append(20)
-dll.append(30)
-dll.prepend(5)
-dll.display()
-dll.delete(20)
-dll.display()
+    def __next__(self):
+        if self._iter_node is None:
+            raise StopIteration
+        value = self._iter_node.value
+        self._iter_node = self._iter_node.next
+        return value
+
+if __name__ == "__main__":
+    linked_list = LinkedList()
+    for _ in range(10):
+        linked_list.add_last(random.randint(1, 100))
+    
+    print("Liste:")
+    linked_list.display()
+    print("Länge der Liste:", linked_list.length())
+    
+    print("Iterieren durch die Liste:")
+    for value in linked_list:
+        print(value, end=" ")
