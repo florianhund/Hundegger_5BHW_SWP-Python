@@ -1,6 +1,9 @@
 import random
 
+from time_decorator import measure_time
 
+
+@measure_time
 def generate_deck():
     """
     Generate a standard deck of 52 cards with symbols and colors.
@@ -14,6 +17,7 @@ def generate_deck():
     ]
 
 
+@measure_time
 def draw_hand(deck, card_amount=5):
     """
     Shuffle the deck and draw a specified number of cards (default: 5).
@@ -22,6 +26,7 @@ def draw_hand(deck, card_amount=5):
     return deck[:card_amount]
 
 
+@measure_time
 def get_hand_details(hand):
     """
     Extract symbols, colors, and symbol counts from the hand.
@@ -39,6 +44,7 @@ def get_hand_details(hand):
     return symbols, colors, symbol_counts
 
 
+@measure_time
 def has_same_values(symbol_counts, count=2):
     """
     Check if any symbol appears the specified number of times.
@@ -46,6 +52,7 @@ def has_same_values(symbol_counts, count=2):
     return any(val == count for val in symbol_counts.values())
 
 
+@measure_time
 def is_two_pair(symbol_counts):
     """
     Check if the hand contains exactly two pairs of symbols.
@@ -53,6 +60,7 @@ def is_two_pair(symbol_counts):
     return list(symbol_counts.values()).count(2) == 2
 
 
+@measure_time
 def is_full_house(symbol_counts):
     """
     Check if the hand is a full house (three of a kind and a pair).
@@ -60,6 +68,7 @@ def is_full_house(symbol_counts):
     return has_same_values(symbol_counts, 2) and has_same_values(symbol_counts, 3)
 
 
+@measure_time
 def is_flush(colors):
     """
     Check if all cards in the hand have the same color.
@@ -67,6 +76,7 @@ def is_flush(colors):
     return len(set(colors)) == 1
 
 
+@measure_time
 def is_street(symbols):
     """
     Check if the hand is a straight (five consecutive symbols).
@@ -75,6 +85,7 @@ def is_street(symbols):
     return len(set(values)) == 5 and values[-1] - values[0] == 4
 
 
+@measure_time
 def is_straight_flush(symbols, colors):
     """
     Check if the hand is a straight flush (straight and flush).
@@ -82,6 +93,7 @@ def is_straight_flush(symbols, colors):
     return is_flush(colors) and is_street(symbols)
 
 
+@measure_time
 def is_royal_flush(symbols, colors):
     """
     Check if the hand is a royal flush (10, J, Q, K, A of the same color).
